@@ -32,7 +32,7 @@ userRoutes.use(auth)
 
 //Protected routes
 
-userRoutes.get("/dashboard", userDashboard)
+userRoutes.route("/dashboard").get(userDashboard).all(wrongMethod)
 
 
 module.exports = userRoutes;
