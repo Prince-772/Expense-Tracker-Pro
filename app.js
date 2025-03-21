@@ -10,10 +10,11 @@ require('dotenv').config();
 
 const app = express();
 app.use(cors())
-const port = 8000;
-mongoose.connect("mongodb://localhost:27017/ExpenseTracker",{})
-.then(console.log("Connected To DB"))
-.catch(console.log)
+const port = process.env.PORT || 8000;
+mongoose.connect(process.env.MONGO_URI, {})
+    .then(() => console.log("Connected To DB"))
+    .catch(err => console.log("DB Connection Error:", err));
+
 
 app.use(express.json());
 
@@ -37,6 +38,6 @@ app.all("*",(req,res,next)=>{
 })
 app.use(errorHandler);
 
-app.listen(port, () => {
-  console.log("Running on localhost:" + port);
+app.listen(port, "0.0.0.0", () => {
+  console.log(`Server running on port: ${port}`);
 });
