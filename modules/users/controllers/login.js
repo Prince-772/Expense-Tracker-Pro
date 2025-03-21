@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const getAccessToken = require("../../../managers/jwtTokenManager")
+const {setJWTtoken} = require("../../../handlers/cookiesHandlers")
 const login = async (req, res) => {
   const usersModel = mongoose.model("users");
   const { email, password } = req.body;
@@ -15,11 +16,11 @@ const login = async (req, res) => {
 
   const accessToken = getAccessToken(getUser)
 
+  setJWTtoken(res,accessToken)
   //success
   res.status(200).json({
     status: "success",
-    message: `Welcome Back ${getUser.name}`,
-    accessToken: accessToken,
+    message: `Welcome Back ${getUser.name}`
   });
 };
 

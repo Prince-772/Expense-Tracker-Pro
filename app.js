@@ -1,6 +1,7 @@
 require("express-async-errors");
 const express = require("express");
 const cors = require("cors")
+const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose")
 const errorHandler = require("./handlers/erroeHandler");
 const userRoutes = require("./modules/users/users.routes");
@@ -9,8 +10,14 @@ require('dotenv').config();
 
 
 const app = express();
-app.use(cors())
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true 
+}));
+app.use(cookieParser());
+
 const port = process.env.PORT || 8000;
+
 mongoose.connect(process.env.MONGO_URI, {})
     .then(() => console.log("Connected To DB"))
     .catch(err => console.log("DB Connection Error:", err));

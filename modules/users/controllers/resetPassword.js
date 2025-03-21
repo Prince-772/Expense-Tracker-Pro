@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const emailSender = require("../../../managers/emailManager");
+const { clearJWTtoken } = require("../../../handlers/cookiesHandlers");
 
 const resetPassword = async (req, res) => {
   const email = req.body.email;
@@ -21,13 +22,19 @@ const resetPassword = async (req, res) => {
   const newHashed_password = await bcrypt.hash(newPassword, 12);
   await usersModel.updateOne(
     { email },
-    { password: newHashed_password,reset_code:null},
+    { password: newHashed_password, reset_code: null },
     { runValidators: true }
   );
-  emailSender(email,"Password Updated Successfully","Your password has been updated successfully")
+  clearJWTtoken(res);
+  emailSender(
+    email,
+    "Password Updated Successfully",
+    "Your password has been updated successfully"
+  );
   res.status(200).json({
-    status:"success",
-    message:"Password Updated Successfully" })
+    status: "success",
+    message: "Password Updated Successfully",
+  });
 };
 
 module.exports = resetPassword;

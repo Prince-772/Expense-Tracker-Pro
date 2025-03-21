@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const getAccessToken = require("../../../managers/jwtTokenManager");
 const emailSender = require("../../../managers/emailManager");
+const {setJWTtoken} = require("../../../handlers/cookiesHandlers")
+
 const register = async (req, res) => {
   const { name, email, password, confirm_password, balance } = req.body;
 
@@ -20,6 +22,8 @@ const register = async (req, res) => {
 
   const accessToken = getAccessToken(createdUser);
 
+  setJWTtoken(res,accessToken)
+  
   emailSender(
     createdUser.email,
     `Welcome ${createdUser.name}`,
@@ -29,8 +33,7 @@ const register = async (req, res) => {
   res.status(200).json({
     status: "success",
     message:"User Registered Successfully",
-    data: { name, email, balance },
-    accessToken,
+    data: { name, email, balance }
   });
 };
 

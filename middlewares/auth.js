@@ -1,21 +1,25 @@
 const jwt = require("jsonwebtoken");
 
 const auth = (req, res, next) => {
-
   try {
-    const accessToken = req.headers.authorization.replace("Bearer ", "");
+    let accessToken = req.cookies?.accessToken;
 
-    const jwt_payload = jwt.verify(accessToken, process.env.jwt_salt);
-    // console.log(jwt_payload);
-    req.user = jwt_payload
+    if (!accessToken) {
+      return res.status(401).json({
+        status: "Failed",
+        message: "Session has expired, please log in again",
+      });
+    }
+
+    const jwt_payload = jwt.verify(accessToken, process.env.JWT_SECRET); 
+    req.user = jwt_payload;
+    next(); 
   } catch (e) {
-    res.status(401).json({
-      status:"Failed",
-      message:"Unable to authorize you"
-    })
-    return
+    return res.status(401).json({
+      status: "Failed",
+      message: "Invalid or expired token",
+    });
   }
-  next();
 };
 
 module.exports = auth;

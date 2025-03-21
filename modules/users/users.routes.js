@@ -1,11 +1,13 @@
 const express = require("express");
 const register = require("./controllers/register");
 const login = require("./controllers/login");
+const logout = require("./controllers/logout");
 const userDashboard = require("./controllers/userDashboard");
 const auth = require("../../middlewares/auth");
 const forgotPassword = require("./controllers/forgotPassword");
 const resetPassword = require("./controllers/resetPassword");
 const wrongMethod = require("../../handlers/wrongMethodshandler");
+
 
 
 const userRoutes = express.Router();
@@ -17,6 +19,10 @@ userRoutes.route("/register")
 
 userRoutes.route("/login")
   .post(login)
+  .all(wrongMethod);
+
+userRoutes.route("/logout")
+  .post(logout)
   .all(wrongMethod);
 
 userRoutes.route("/forgotpassword")

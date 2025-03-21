@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const getTransactions = async (req, res) => {
   const transactionsModel = mongoose.model("transactions");
   const user_ID = req.user._id;
-  console.log(req.query);
   
   const transactions = await transactionsModel.find({ user_ID,...req.query }).select("amount remarks createdAt transaction_type -_id");
 
