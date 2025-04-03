@@ -6,19 +6,19 @@ const { clearJWTtoken } = require("../../../handlers/cookiesHandlers");
 const resetPassword = async (req, res) => {
   const email = req.body.email;
   if (!email) throw "Email is required";
-  const enteredCode = req.body.reset_code;
-  const newPassword = req.body.new_password;
-  const confirmPassword = req.body.confirm_password;
   const usersModel = mongoose.model("users");
   const getUser = await usersModel.findOne({ email });
   if (!getUser) throw "Email not Found";
-  const resetCode = getUser.reset_code;
+  const enteredCode = Number(req.body.reset_code);
   if (!enteredCode) throw "Please Enter the code sent to your email";
-  if (resetCode !== enteredCode) throw "Reset code doesn't match";
+  const newPassword = req.body.new_password;
+  const confirmPassword = req.body.confirm_password;
+  const resetCode = getUser.reset_code;
+  if (resetCode !== enteredCode) throw "Reset code do not matched";
   if (!newPassword) throw "New Password is required";
   if (!confirmPassword) throw "Confirm Password is required";
   if (newPassword !== confirmPassword)
-    throw "Please Confirm The Password Correctly";
+    throw "Password do not matched";
   const newHashed_password = await bcrypt.hash(newPassword, 12);
   await usersModel.updateOne(
     { email },

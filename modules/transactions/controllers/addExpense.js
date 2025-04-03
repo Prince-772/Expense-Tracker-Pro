@@ -18,7 +18,7 @@ const addExpense = async (req, res) => {
 
   await usersModel.updateOne(
     { _id: req.user._id },
-    { $inc: { balance: amount * -1 } },
+    { $inc: { balance: amount * -1, totalExpense: amount }},
     {
       runValidators: true,
     }

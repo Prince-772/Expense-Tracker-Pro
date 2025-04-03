@@ -14,14 +14,22 @@ const deleteTransaction = async (req, res) => {
   });
 
   if (!getTransaction) throw "Transaction not found in your account";
-   
+
   let transaction_type_flag = 1;
   if (getTransaction.transaction_type === "income") transaction_type_flag = -1;
 
   await usersModel.findOneAndUpdate(
     { _id: req.user._id },
-    { $inc: { balance: getTransaction.amount * transaction_type_flag } },
-    {runValidators:true}
+    {
+      $inc: {
+        balance: getTransaction.amount * transaction_type_flag,
+        totalIncome:
+          transaction_type_flag === -1 ? getTransaction.amount * -1 : 0,
+        totalExpense:
+          transaction_type_flag === -1 ? 0 : getTransaction.amount * -1,
+      },
+    },
+    { runValidators: true }
   );
   await transactionsModel.deleteOne({
     _id: transaction_id,

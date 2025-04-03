@@ -18,7 +18,7 @@ const addIncome = async (req, res) => {
 
   await usersModel.updateOne(
     { _id: req.user._id },
-    { $inc: { balance: amount } },
+    { $inc: { balance: amount,totalIncome:amount } },
     {
       runValidators: true,
     }

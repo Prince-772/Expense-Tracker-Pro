@@ -6,7 +6,7 @@ const forgotPassword = async (req, res) => {
   const usersModel = mongoose.model("users");
 
   if (!email) throw "Email is required";
-  const getUser = await usersModel.findOne({ email });
+  const getUser = await usersModel.findOne({ email }).select("-_id name email");
   // console.log(getUser)
   if (!getUser) throw "This email is not registered";
 
@@ -17,6 +17,7 @@ const forgotPassword = async (req, res) => {
   res.status(200).json({
     status: "success",
     message: "Password reset code has been sent to your email",
+    data:getUser
   });
 };
 

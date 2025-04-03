@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
-const getAccessToken = require("../../../managers/jwtTokenManager")
-const {setJWTtoken} = require("../../../handlers/cookiesHandlers")
+const getAccessToken = require("../../../managers/jwtTokenManager");
+const { setJWTtoken } = require("../../../handlers/cookiesHandlers");
 const login = async (req, res) => {
   const usersModel = mongoose.model("users");
   const { email, password } = req.body;
@@ -14,13 +14,13 @@ const login = async (req, res) => {
 
   if (!comparePassword) throw "Wrong Password, Try again";
 
-  const accessToken = getAccessToken(getUser)
+  const accessToken = getAccessToken(getUser);
 
-  setJWTtoken(res,accessToken)
+  setJWTtoken(res, accessToken);
   //success
   res.status(200).json({
     status: "success",
-    message: `Welcome Back ${getUser.name}`
+    message: `Login successful`
   });
 };
 

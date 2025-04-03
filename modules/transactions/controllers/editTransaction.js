@@ -35,40 +35,61 @@ const editTransaction = async (req, res) => {
   if (newAmount !== undefined && isNaN(updatedAmount)) {
     throw "Invalid amount provided";
   }
-  if (newAmount <= 0) throw "Amount must be greater than 0"
+  if (newAmount <= 0) throw "Amount must be greater than 0";
 
   let balanceChange = 0;
+  let totalIncomeChange = 0;
+  let totalExpenseChange = 0;
 
   // Case 1: Updating only the amount, same type
   if (
     newAmount !== undefined &&
     (!transaction_type || transaction_type === oldType)
   ) {
-    balanceChange =
-      oldType === "income"
-        ? updatedAmount - oldAmount
-        : oldAmount - updatedAmount;
+    if (oldType === "income") {
+      balanceChange = updatedAmount - oldAmount;
+      totalIncomeChange = updatedAmount - oldAmount;
+    } else {
+      balanceChange = oldAmount - updatedAmount;
+      totalExpenseChange = updatedAmount - oldAmount;
+    }
   }
   // Case 2: Updating only the transaction type, keeping the same amount
   else if (transaction_type && newAmount === undefined) {
-    balanceChange =
-      oldType === "income"
-        ? -oldAmount * 2 // Convert income to expense
-        : oldAmount * 2; // Convert expense to income
+    if (oldType === "income" && transaction_type === "expense") {
+      balanceChange = -oldAmount * 2;
+      totalIncomeChange = -oldAmount;
+      totalExpenseChange = oldAmount;
+    } else if (oldType === "expense" && transaction_type === "income") {
+      balanceChange = oldAmount * 2;
+      totalIncomeChange = oldAmount;
+      totalExpenseChange = -oldAmount;
+    }
   }
   // Case 3: Updating both amount and type
   else if (transaction_type && newAmount !== undefined) {
-    balanceChange =
-      oldType === "income"
-        ? - oldAmount - updatedAmount // Remove old income and add new expense
-        : oldAmount + updatedAmount; // Remove old expense and add new income
+    if (oldType === "income" && transaction_type === "expense") {
+      balanceChange = -oldAmount - updatedAmount;
+      totalIncomeChange = -oldAmount;
+      totalExpenseChange = updatedAmount;
+    } else if (oldType === "expense" && transaction_type === "income") {
+      balanceChange = oldAmount + updatedAmount;
+      totalIncomeChange = updatedAmount;
+      totalExpenseChange = -oldAmount;
+    }
   }
 
   // Update the user's balance
   if (balanceChange !== 0) {
     await usersModel.findByIdAndUpdate(
       req.user._id,
-      { $inc: { balance: balanceChange } },
+      {
+        $inc: {
+          balance: balanceChange,
+          totalExpense: totalExpenseChange,
+          totalIncome: totalIncomeChange,
+        },
+      },
       { runValidators: true }
     );
   }
