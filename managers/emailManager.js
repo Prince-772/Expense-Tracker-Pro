@@ -2,16 +2,15 @@ const nodemailer = require("nodemailer");
 
 const emailSender = (to, subject, text) => {
   let transport = nodemailer.createTransport({
-    host: "sandbox.smtp.mailtrap.io",
-    port: 2525,
+    service: "gmail",
     auth: {
-      user: "562c1ed4e43f43",
-      pass: "3090c63e86118e",
+      user: process.env.EMAIL_ID,
+      pass: process.env.EMAIL_PASSWORD,
     },
   });
 
   transport.sendMail({
-    from: "trial@expensemanager.com",
+    from: `"Expense Tracker PRO" <${process.env.EMAIL_ID}>`,
     to,
     subject,
     text,
