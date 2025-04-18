@@ -6,6 +6,7 @@ const userDashboard = require("./controllers/userDashboard");
 const auth = require("../../middlewares/auth");
 const forgotPassword = require("./controllers/forgotPassword");
 const resetPassword = require("./controllers/resetPassword");
+const editProfile = require("../users/controllers/editProfile")
 const wrongMethod = require("../../handlers/wrongMethodshandler");
 
 
@@ -39,6 +40,7 @@ userRoutes.use(auth)
 //Protected routes
 
 userRoutes.route("/dashboard").get(userDashboard).all(wrongMethod)
+userRoutes.route("/editprofile").patch(editProfile).all(wrongMethod)
 
 
 module.exports = userRoutes;
