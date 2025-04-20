@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 
-const emailSender = (to, subject, text) => {
+const emailSender = async (to, subject, text) => {
   let transport = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -8,14 +8,17 @@ const emailSender = (to, subject, text) => {
       pass: process.env.EMAIL_PASSWORD,
     },
   });
-
-  transport.sendMail({
-    from: `"Expense Tracker PRO" <${process.env.EMAIL_ID}>`,
-    to,
-    subject,
-    text,
-    html: `<h2>${text}</h2>`,
-  });
+  try {
+    await transport.sendMail({
+      from: `"Expense Tracker PRO" <${process.env.EMAIL_ID}>`,
+      to,
+      subject,
+      text,
+      html: `<h2>${text}</h2>`,
+    });
+  } catch (err) {
+    throw (err.message || err || "Something went wrong")
+  }
 };
 
 module.exports = emailSender;
