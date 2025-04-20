@@ -13,14 +13,15 @@ const EditProfile = async (req, res) => {
       "message":"User not found"
     })
   }
-  await userModel.findByIdAndUpdate(userId, {
+  const updatedUser = await userModel.findByIdAndUpdate(userId, {
     ...(newName && {name: newName}),
     ...(newProfession && {profession:newProfession})
   },
-    { runValidators: true, new:true })
+    { runValidators: true, new:true }).select("-_id name email profession balance totalIncome totalExpense createdAt")
   res.status(200).json({
     status: "success",
     "message": "Profile updated successfully",
+    "userInfo" : updatedUser
   })
 };
 
